@@ -1,0 +1,74 @@
+{% extends "dashboard_base.html" %}
+{% block title %}View Books — Library{% endblock %}
+{% block sidebar_nav %}
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link active"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('manage_books') }}" class="nav-link"><span class="icon">⚙</span><span>Manage Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Requests</span></a>
+    <a href="{{ url_for('statistics') }}" class="nav-link"><span class="icon">📊</span><span>Statistics</span></a>
+    {% elif session.role == 'librarian' %}
+    <a href="{{ url_for('librarian_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link active"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Book Requests</span></a>
+    {% else %}
+    <a href="{{ url_for('user_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link active"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('request_book') }}" class="nav-link"><span class="icon">📩</span><span>Request Book</span></a>
+    <a href="{{ url_for('return_book') }}" class="nav-link"><span class="icon">🔄</span><span>Return Book</span></a>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>View Books</h1>
+        <p class="breadcrumb">Home / View Books</p>
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h2>📚 Library Books</h2>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('view_books') }}" class="search-bar">
+                <input type="text" name="search" placeholder="Search by title..." value="{{ search }}">
+                <button type="submit" class="btn btn-primary btn-sm">🔍 Search</button>
+            </form>
+
+            {% if books %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>{{ book[0] }}</td>
+                            <td>{{ book[1] }}</td>
+                            <td>{{ book[2] }}</td>
+                            <td>{{ book[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>No books found</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

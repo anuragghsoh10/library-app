@@ -1,0 +1,77 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Book Requests — Library{% endblock %}
+{% block sidebar_nav %}
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('manage_books') }}" class="nav-link"><span class="icon">⚙</span><span>Manage Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link active"><span class="icon">📩</span><span>Requests</span></a>
+    <a href="{{ url_for('statistics') }}" class="nav-link"><span class="icon">📊</span><span>Statistics</span></a>
+    {% else %}
+    <a href="{{ url_for('librarian_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link active"><span class="icon">📩</span><span>Book Requests</span></a>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Book Requests</h1>
+        <p class="breadcrumb">Home / Book Requests</p>
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h2>📩 All Book Requests</h2>
+        </div>
+        <div class="card-body">
+            {% if requests %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Book ID</th>
+                            <th>Username</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>{{ req[0] }}</td>
+                            <td>{{ req[1] }}</td>
+                            <td>{{ req[2] }}</td>
+                            <td>
+                                <span class="badge badge-{{ req[3] }}">{{ req[3] }}</span>
+                            </td>
+                            <td>
+                                {% if req[3] == 'pending' %}
+                                <div class="action-btns">
+                                    <a href="{{ url_for('approve_request', request_id=req[0], book_id=req[1], username=req[2]) }}" class="btn btn-success btn-sm">✅ Approve</a>
+                                    <a href="{{ url_for('reject_request', request_id=req[0]) }}" class="btn btn-danger btn-sm">❌ Reject</a>
+                                </div>
+                                {% else %}
+                                <span style="color: #95a5a6; font-size: 13px;">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>No book requests</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

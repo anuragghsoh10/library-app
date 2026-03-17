@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Register — Library{% endblock %}
+{% block body %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="icon-header">📝</div>
+        <h1>Create Account</h1>
+        <p class="subtitle">Register to access the library system</p>
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Create a password" required>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select name="role">
+                    <option value="user">User</option>
+                    <option value="librarian">Librarian</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Register</button>
+        </form>
+        <div class="link">
+            Already have an account? <a href="{{ url_for('login') }}">Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

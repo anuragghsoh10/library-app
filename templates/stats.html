@@ -1,0 +1,192 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Statistics — Library{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block sidebar_nav %}
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('manage_books') }}" class="nav-link"><span class="icon">⚙</span><span>Manage Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Requests</span></a>
+    <a href="{{ url_for('statistics') }}" class="nav-link active"><span class="icon">📊</span><span>Statistics</span></a>
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Library Statistics</h1>
+        <p class="breadcrumb">Home / Statistics</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="stats-summary" id="statsSummary">
+        <div class="s-card blue">
+            <div class="s-icon">📚</div>
+            <div class="s-value" id="totalBooks">-</div>
+            <div class="s-label">Total Titles</div>
+        </div>
+        <div class="s-card green">
+            <div class="s-icon">📦</div>
+            <div class="s-value" id="totalCopies">-</div>
+            <div class="s-label">Total Copies</div>
+        </div>
+        <div class="s-card orange">
+            <div class="s-icon">📖</div>
+            <div class="s-value" id="totalIssued">-</div>
+            <div class="s-label">Books Issued</div>
+        </div>
+        <div class="s-card red">
+            <div class="s-icon">📩</div>
+            <div class="s-value" id="pendingReq">-</div>
+            <div class="s-label">Pending Requests</div>
+        </div>
+        <div class="s-card teal">
+            <div class="s-icon">✅</div>
+            <div class="s-value" id="approvedReq">-</div>
+            <div class="s-label">Approved</div>
+        </div>
+        <div class="s-card purple">
+            <div class="s-icon">👤</div>
+            <div class="s-value" id="totalUsers">-</div>
+            <div class="s-label">Total Users</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h3>📊 Book Availability (Top 10)</h3>
+            <canvas id="bookChart" height="260"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>🍩 Request Status Breakdown</h3>
+            <canvas id="requestChart" height="260"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>👥 Top Borrowers</h3>
+            <canvas id="borrowerChart" height="260"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>📈 Most Requested Books</h3>
+            <canvas id="requestedChart" height="260"></canvas>
+        </div>
+    </div>
+
+    <script>
+    fetch("{{ url_for('api_stats') }}")
+        .then(res => res.json())
+        .then(data => {
+            // Summary cards
+            document.getElementById("totalBooks").textContent = data.total_books;
+            document.getElementById("totalCopies").textContent = data.total_copies;
+            document.getElementById("totalIssued").textContent = data.total_issued;
+            document.getElementById("pendingReq").textContent = data.pending;
+            document.getElementById("approvedReq").textContent = data.approved;
+            document.getElementById("totalUsers").textContent = data.total_users;
+
+            // Common chart options
+            const commonOpts = {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { font: { family: "'Inter', sans-serif", size: 12 } } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { family: "'Inter'", size: 11 } } },
+                    y: { grid: { color: "#f0f2f5" }, ticks: { font: { family: "'Inter'", size: 11 } } }
+                }
+            };
+
+            // Book Availability Bar Chart
+            if (data.book_availability.length > 0) {
+                new Chart(document.getElementById("bookChart"), {
+                    type: "bar",
+                    data: {
+                        labels: data.book_availability.map(b => b.title.length > 14 ? b.title.slice(0,14)+".." : b.title),
+                        datasets: [{
+                            label: "Quantity",
+                            data: data.book_availability.map(b => b.quantity),
+                            backgroundColor: [
+                                "#3498db","#2ecc71","#e67e22","#e74c3c","#9b59b6",
+                                "#1abc9c","#f39c12","#d35400","#c0392b","#8e44ad"
+                            ],
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: { ...commonOpts, plugins: { ...commonOpts.plugins, legend: { display: false } } }
+                });
+            }
+
+            // Request Status Donut Chart
+            const reqTotal = data.pending + data.approved + data.rejected;
+            if (reqTotal > 0) {
+                new Chart(document.getElementById("requestChart"), {
+                    type: "doughnut",
+                    data: {
+                        labels: [`Pending (${data.pending})`, `Approved (${data.approved})`, `Rejected (${data.rejected})`],
+                        datasets: [{
+                            data: [data.pending, data.approved, data.rejected],
+                            backgroundColor: ["#f39c12", "#27ae60", "#e74c3c"],
+                            borderWidth: 3,
+                            borderColor: "#fff",
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: "55%",
+                        plugins: {
+                            legend: {
+                                position: "bottom",
+                                labels: { padding: 16, font: { family: "'Inter'", size: 12 } }
+                            }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById("requestChart").parentElement.innerHTML += '<div class="empty-state"><p>No request data</p></div>';
+            }
+
+            // Top Borrowers Chart
+            if (data.top_borrowers.length > 0) {
+                new Chart(document.getElementById("borrowerChart"), {
+                    type: "bar",
+                    data: {
+                        labels: data.top_borrowers.map(b => b.name),
+                        datasets: [{
+                            label: "Books Borrowed",
+                            data: data.top_borrowers.map(b => b.count),
+                            backgroundColor: "#9b59b6",
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: { ...commonOpts, plugins: { ...commonOpts.plugins, legend: { display: false } } }
+                });
+            } else {
+                document.getElementById("borrowerChart").parentElement.innerHTML += '<div class="empty-state"><p>No borrowing data</p></div>';
+            }
+
+            // Most Requested Books Chart
+            if (data.most_requested.length > 0) {
+                new Chart(document.getElementById("requestedChart"), {
+                    type: "bar",
+                    data: {
+                        labels: data.most_requested.map(b => b.title.length > 14 ? b.title.slice(0,14)+".." : b.title),
+                        datasets: [{
+                            label: "Requests",
+                            data: data.most_requested.map(b => b.count),
+                            backgroundColor: "#e67e22",
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: { ...commonOpts, plugins: { ...commonOpts.plugins, legend: { display: false } } }
+                });
+            } else {
+                document.getElementById("requestedChart").parentElement.innerHTML += '<div class="empty-state"><p>No request data</p></div>';
+            }
+        });
+    </script>
+{% endblock %}

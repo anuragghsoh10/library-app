@@ -1,0 +1,64 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Issued Books — Library{% endblock %}
+{% block sidebar_nav %}
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link active"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('manage_books') }}" class="nav-link"><span class="icon">⚙</span><span>Manage Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Requests</span></a>
+    <a href="{{ url_for('statistics') }}" class="nav-link"><span class="icon">📊</span><span>Statistics</span></a>
+    {% else %}
+    <a href="{{ url_for('librarian_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link active"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Book Requests</span></a>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Issued Books</h1>
+        <p class="breadcrumb">Home / Issued Books</p>
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h2>📋 Currently Issued Books</h2>
+        </div>
+        <div class="card-body">
+            {% if books %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue ID</th>
+                            <th>Book ID</th>
+                            <th>Student</th>
+                            <th>Issue Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>{{ book[0] }}</td>
+                            <td>{{ book[1] }}</td>
+                            <td>{{ book[2] }}</td>
+                            <td>{{ book[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>No books currently issued</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

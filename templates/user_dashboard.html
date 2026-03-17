@@ -1,0 +1,32 @@
+{% extends "dashboard_base.html" %}
+{% block title %}User Dashboard — Library{% endblock %}
+{% block sidebar_nav %}
+    <a href="{{ url_for('user_dashboard') }}" class="nav-link active"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('request_book') }}" class="nav-link"><span class="icon">📩</span><span>Request Book</span></a>
+    <a href="{{ url_for('return_book') }}" class="nav-link"><span class="icon">🔄</span><span>Return Book</span></a>
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>User Dashboard</h1>
+        <p class="breadcrumb">Home / Dashboard</p>
+    </div>
+
+    <div class="action-grid">
+        <a href="{{ url_for('view_books') }}" class="action-card">
+            <div class="card-icon">🔍</div>
+            <h3>View Books</h3>
+            <p>Browse all available books</p>
+        </a>
+        <a href="{{ url_for('request_book') }}" class="action-card">
+            <div class="card-icon">📩</div>
+            <h3>Request Book</h3>
+            <p>Request a book to borrow</p>
+        </a>
+        <a href="{{ url_for('return_book') }}" class="action-card">
+            <div class="card-icon">🔄</div>
+            <h3>Return Book</h3>
+            <p>Return your borrowed books</p>
+        </a>
+    </div>
+{% endblock %}

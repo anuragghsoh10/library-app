@@ -1,0 +1,59 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Return Book — Library{% endblock %}
+{% block sidebar_nav %}
+    <a href="{{ url_for('user_dashboard') }}" class="nav-link"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('request_book') }}" class="nav-link"><span class="icon">📩</span><span>Request Book</span></a>
+    <a href="{{ url_for('return_book') }}" class="nav-link active"><span class="icon">🔄</span><span>Return Book</span></a>
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Return a Book</h1>
+        <p class="breadcrumb">Home / Return Book</p>
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h2>🔄 Your Borrowed Books</h2>
+        </div>
+        <div class="card-body">
+            {% if books %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue ID</th>
+                            <th>Book ID</th>
+                            <th>Your Name</th>
+                            <th>Issue Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>{{ book[0] }}</td>
+                            <td>{{ book[1] }}</td>
+                            <td>{{ book[2] }}</td>
+                            <td>{{ book[3] }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('return_book') }}" style="display:inline;">
+                                    <input type="hidden" name="issue_id" value="{{ book[0] }}">
+                                    <input type="hidden" name="book_id" value="{{ book[1] }}">
+                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Return this book?');">🔄 Return</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <p>You have no borrowed books</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

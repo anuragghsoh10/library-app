@@ -1,0 +1,82 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Admin Dashboard — Library{% endblock %}
+{% block sidebar_nav %}
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link active"><span class="icon">🏠</span><span>Dashboard</span></a>
+    <a href="{{ url_for('add_book') }}" class="nav-link"><span class="icon">📚</span><span>Add Book</span></a>
+    <a href="{{ url_for('issue_book') }}" class="nav-link"><span class="icon">📖</span><span>Issue Book</span></a>
+    <a href="{{ url_for('view_books') }}" class="nav-link"><span class="icon">🔍</span><span>View Books</span></a>
+    <a href="{{ url_for('issued_books') }}" class="nav-link"><span class="icon">📋</span><span>Issued Books</span></a>
+    <a href="{{ url_for('manage_books') }}" class="nav-link"><span class="icon">⚙</span><span>Manage Books</span></a>
+    <a href="{{ url_for('view_requests') }}" class="nav-link"><span class="icon">📩</span><span>Requests</span></a>
+    <a href="{{ url_for('statistics') }}" class="nav-link"><span class="icon">📊</span><span>Statistics</span></a>
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p class="breadcrumb">Home / Dashboard</p>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">📚</div>
+            <div class="stat-info">
+                <h3>{{ total_books }}</h3>
+                <p>Total Books</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">📖</div>
+            <div class="stat-info">
+                <h3>{{ issued_books }}</h3>
+                <p>Issued Books</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red">📩</div>
+            <div class="stat-info">
+                <h3>{{ pending_requests }}</h3>
+                <p>Pending Requests</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">👤</div>
+            <div class="stat-info">
+                <h3>{{ total_users }}</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-grid">
+        <a href="{{ url_for('add_book') }}" class="action-card">
+            <div class="card-icon">📚</div>
+            <h3>Add Book</h3>
+            <p>Add new books to the library</p>
+        </a>
+        <a href="{{ url_for('issue_book') }}" class="action-card">
+            <div class="card-icon">📖</div>
+            <h3>Issue Book</h3>
+            <p>Issue books to students</p>
+        </a>
+        <a href="{{ url_for('view_books') }}" class="action-card">
+            <div class="card-icon">🔍</div>
+            <h3>View Books</h3>
+            <p>Browse all library books</p>
+        </a>
+        <a href="{{ url_for('issued_books') }}" class="action-card">
+            <div class="card-icon">📋</div>
+            <h3>Issued Books</h3>
+            <p>View all issued books</p>
+        </a>
+        <a href="{{ url_for('manage_books') }}" class="action-card">
+            <div class="card-icon">⚙</div>
+            <h3>Manage Books</h3>
+            <p>Update or delete books</p>
+        </a>
+        <a href="{{ url_for('statistics') }}" class="action-card">
+            <div class="card-icon">📊</div>
+            <h3>Statistics</h3>
+            <p>View library analytics</p>
+        </a>
+    </div>
+{% endblock %}
